@@ -84,6 +84,7 @@ impl Renderer {
             }
             #[cfg(feature = "opengl")]
             {
+                // ref: https://github.com/tomaka/glutin/blob/0c3fbddd6ce1da70d8141a634f28a70f71b130d7/tests/headless.rs
                 // ex. `RUST_BACKTRACE=1 cargo run --example window`
                 let (width, height) = size;
                 let mut values: Vec<u8> = vec![0;(width*height*4) as usize];
