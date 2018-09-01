@@ -82,8 +82,28 @@ impl Renderer {
                 self.window.resize(size.0, size.1);
                 self.resize(pipe, size);
             }
+            #[cfg(feature = "opengl")]
+            {
+                // ex. `RUST_BACKTRACE=1 cargo run --example window`
+                let (width, height) = size;
+                let mut values: Vec<u8> = vec![0;(width*height*4) as usize];
+                unsafe {
+                    ::gl::load_with(|symbol| self.window.get_proc_address(symbol) as *const _);
+                    ::gl::ReadPixels(0, 0, width as i32, height as i32, ::gl::RGBA, ::gl::UNSIGNED_BYTE, values.as_mut_ptr() as *mut ::std::os::raw::c_void);
+                }
+                use bmp::{Image, Pixel};
+                let mut img = Image::new(width, height);
+                let mut i = 0;
+                for w in 0..width {
+                    for h in 0..height {
+                        img.set_pixel(w, h, Pixel::new(values[i], values[i+1], values[i+2]));
+                        i += 4;
+                    }
+                }
+                let _ = img.save("./img.bmp");
+            }
         }
-
+        
         pipe.apply(&mut self.encoder, self.factory.clone(), data);
         self.encoder.flush(&mut self.device);
         self.device.cleanup();

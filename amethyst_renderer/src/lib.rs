@@ -39,6 +39,8 @@ extern crate gfx;
 extern crate gfx_core;
 #[macro_use]
 extern crate gfx_macros;
+extern crate gl;
+extern crate bmp;
 #[macro_use]
 extern crate glsl_layout;
 extern crate hetseq;
